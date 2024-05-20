@@ -9,6 +9,12 @@ var specialCases = {
     }
 };
 
+function bold(s)
+{
+    if (s.length) return `**${s}**`;
+    else return s;
+}
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("story")
@@ -39,7 +45,7 @@ module.exports = {
                 {
                     var word = await specialCases[keyword](interaction);
 
-                    output += `**${word}**`;
+                    output += bold(word);
                     inKeyword = false;
                     keyword = "";
                 }
@@ -48,7 +54,7 @@ module.exports = {
                     var wordlist = wordlistMgr.wordlists.get(keyword);
                     var word = wordlist[Math.floor(Math.random() * wordlist.length)];
 
-                    output += `**${word}**`;
+                    output += bold(word);
                     inKeyword = false;
                     keyword = "";
                 }
@@ -77,20 +83,26 @@ module.exports = {
             {
                 var word = await specialCases[keyword](interaction);
                 
-                output += `**${word}**`;
+                output += bold(word);
             }
             else if (wordlistMgr.wordlists.has(keyword))
             {
                 var wordlist = wordlistMgr.wordlists.get(keyword);
                 var word = wordlist[Math.floor(Math.random() * wordlist.length)];
 
-                output += `**${word}**`;
+                output += bold(word);
             }
             else
             {
                 // invalid keyword, leaving as is
                 output += "$" + keyword;
             }
+        }
+
+        if (output.trim().length === 0)
+        {
+            await interaction.reply("[empty]"); // TODO: something better
+            return;
         }
 
         await interaction.reply(output);
