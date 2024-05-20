@@ -43,7 +43,19 @@ module.exports = {
         // TODO: process longer keywords first somehow
         for (var i of text)
         {
-            if (inKeyword)
+            if (i === "$")
+            {
+                if (inKeyword)
+                {
+                    // invalid keyword, leaving as is
+                    output.push("$");
+                    output.push(keyword);
+                }
+
+                inKeyword = true;
+                keyword = "";
+            }
+            else if (inKeyword)
             {
                 keyword += i;
 
@@ -55,7 +67,6 @@ module.exports = {
                     output.push(word);
                     pushbold(output);
                     inKeyword = false;
-                    keyword = "";
                 }
                 else if (wordlistMgr.wordlists.has(keyword))
                 {
@@ -66,7 +77,6 @@ module.exports = {
                     output.push(word);
                     pushbold(output);
                     inKeyword = false;
-                    keyword = "";
                 }
                 else if (keyword.length > wordlistMgr.maxKeywordLen)
                 {
@@ -74,12 +84,7 @@ module.exports = {
                     output.push("$");
                     output.push(keyword);
                     inKeyword = false;
-                    keyword = "";
                 }
-            }
-            else if (i === "$")
-            {
-                inKeyword = true;
             }
             else
             {
