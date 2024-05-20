@@ -9,7 +9,7 @@ var maxKeywordLen = 0
 for (var file of wordlistFiles)
 {
     var filePath = path.join(wordlistDir, file);
-    var wordlist = fs.readFileSync(filePath, { encoding: "utf-8" }).split("\n"); // .filter(word => word !== "");
+    var wordlist = fs.readFileSync(filePath, { encoding: "utf-8" }).split("\n");
 
     wordlists.set(file, wordlist);
 

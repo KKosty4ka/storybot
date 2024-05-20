@@ -15,26 +15,6 @@ module.exports = {
     {
         var text = interaction.options.getString("text");
 
-        /*text = replaceFunc(text, "$user", () =>
-        {
-            // BUG: only gets online users for some reason
-            var user = interaction.guild.members.cache.random().user;
-            user = user.globalName ?? user.username;
-            return "**" + user + "**";
-        });
-
-        // TODO: process longer keywords first
-        for (var keyword of wordlistMgr.wordlists.keys())
-        {
-            var wordlist = wordlistMgr.wordlists.get(keyword);
-
-            text = replaceFunc(text, "$" + keyword, () =>
-            {
-                var word = wordlist[Math.floor(Math.random() * wordlist.length)];
-                return "**" + word + "**";
-            });
-        }*/
-
         var output = "";
         var inKeyword = false;
         var keyword = "";
