@@ -5,7 +5,7 @@ const path = require("path");
 const fs = require("fs");
 
 // probably bad
-global.wordlists = wordlistMgr.wordlists;
+global.wordlistMgr = wordlistMgr;
 
 var client = new Client({
     intents: [GatewayIntentBits.Guilds],

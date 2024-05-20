@@ -1,15 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
 
-function replaceFunc(str, pattern, func)
-{
-    while (str.includes(pattern))
-    {
-        str = str.replace(pattern, func());
-    }
-
-    return str;
-}
-
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("story")
@@ -25,7 +15,7 @@ module.exports = {
     {
         var text = interaction.options.getString("text");
 
-        text = replaceFunc(text, "$user", () =>
+        /*text = replaceFunc(text, "$user", () =>
         {
             // BUG: only gets online users for some reason
             var user = interaction.guild.members.cache.random().user;
@@ -34,18 +24,84 @@ module.exports = {
         });
 
         // TODO: process longer keywords first
-        // TODO: don't go through every fucking keyword
-        for (var keyword of wordlists.keys())
+        for (var keyword of wordlistMgr.wordlists.keys())
         {
-            var wordlist = wordlists.get(keyword);
+            var wordlist = wordlistMgr.wordlists.get(keyword);
 
             text = replaceFunc(text, "$" + keyword, () =>
             {
                 var word = wordlist[Math.floor(Math.random() * wordlist.length)];
                 return "**" + word + "**";
             });
+        }*/
+
+        var output = "";
+        var inKeyword = false;
+        var keyword = "";
+
+        // TODO: process longer keywords first somehow
+        for (var i of text)
+        {
+            if (inKeyword)
+            {
+                keyword += i;
+
+                if (keyword === "user") // special case for $user
+                {
+                    // BUG: only gets online users for some reason
+                    var user = interaction.guild.members.cache.random().user;
+                    user = user.globalName ?? user.username;
+                    
+                    output += `**${user}**`;
+                    inKeyword = false;
+                    keyword = "";
+                }
+                else if (wordlistMgr.wordlists.has(keyword))
+                {
+                    var wordlist = wordlistMgr.wordlists.get(keyword);
+                    var word = wordlist[Math.floor(Math.random() * wordlist.length)];
+
+                    output += `**${word}**`;
+                    inKeyword = false;
+                    keyword = "";
+                }
+                else if (keyword.length > wordlistMgr.maxKeywordLen)
+                {
+                    // invalid keyword, leaving as is
+                    output += "$" + keyword;
+                    inKeyword = false;
+                    keyword = "";
+                }
+            }
+            else if (i === "$")
+            {
+                inKeyword = true;
+            }
+            else
+            {
+                output += i;
+            }
         }
 
-        await interaction.reply(text);
+        // in case the keyword is the last thing
+        if (inKeyword)
+        {
+            if (wordlistMgr.wordlists.has(keyword))
+            {
+                var wordlist = wordlistMgr.wordlists.get(keyword);
+                var word = wordlist[Math.floor(Math.random() * wordlist.length)];
+
+                output += `**${word}**`;
+                inKeyword = false;
+                keyword = "";
+            }
+            else
+            {
+                // invalid keyword, leaving as is
+                output += "$" + keyword;
+            }
+        }
+
+        await interaction.reply(output);
     }
 };

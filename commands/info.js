@@ -12,7 +12,7 @@ module.exports = {
             .setTitle("StoryBot")
             .addFields({
                 name: "Current keywords are:",
-                value: "$user\n" + [...wordlists.keys()].map(i => "$" + i).join("\n")
+                value: "$user\n" + [...wordlistMgr.wordlists.keys()].map(i => "$" + i).join("\n")
             })
             .setFooter({ text: "Made by KKosty4ka" });
         
