@@ -9,10 +9,16 @@ var specialCases = {
     }
 };
 
-function bold(s)
+function pushbold(arr)
 {
-    if (s.length) return `**${s}**`;
-    else return s;
+    if (arr[arr.length - 1] === "**")
+    {
+        arr.pop();
+    }
+    else
+    {
+        arr.push("**");
+    }
 }
 
 module.exports = {
@@ -30,7 +36,7 @@ module.exports = {
     {
         var text = interaction.options.getString("text");
 
-        var output = "";
+        var output = [];
         var inKeyword = false;
         var keyword = "";
 
@@ -45,7 +51,9 @@ module.exports = {
                 {
                     var word = await specialCases[keyword](interaction);
 
-                    output += bold(word);
+                    pushbold(output);
+                    output.push(word);
+                    pushbold(output);
                     inKeyword = false;
                     keyword = "";
                 }
@@ -54,14 +62,17 @@ module.exports = {
                     var wordlist = wordlistMgr.wordlists.get(keyword);
                     var word = wordlist[Math.floor(Math.random() * wordlist.length)];
 
-                    output += bold(word);
+                    pushbold(output);
+                    output.push(word);
+                    pushbold(output);
                     inKeyword = false;
                     keyword = "";
                 }
                 else if (keyword.length > wordlistMgr.maxKeywordLen)
                 {
                     // invalid keyword, leaving as is
-                    output += "$" + keyword;
+                    output.push("$");
+                    output.push(keyword);
                     inKeyword = false;
                     keyword = "";
                 }
@@ -72,7 +83,7 @@ module.exports = {
             }
             else
             {
-                output += i;
+                output.push(i);
             }
         }
 
@@ -83,21 +94,28 @@ module.exports = {
             {
                 var word = await specialCases[keyword](interaction);
                 
-                output += bold(word);
+                pushbold(output);
+                output.push(word);
+                pushbold(output);
             }
             else if (wordlistMgr.wordlists.has(keyword))
             {
                 var wordlist = wordlistMgr.wordlists.get(keyword);
                 var word = wordlist[Math.floor(Math.random() * wordlist.length)];
 
-                output += bold(word);
+                pushbold(output);
+                output.push(word);
+                pushbold(output);
             }
             else
             {
                 // invalid keyword, leaving as is
-                output += "$" + keyword;
+                output.push("$");
+                output.push(keyword);
             }
         }
+
+        output = output.join("");
 
         if (output.trim().length === 0)
         {
