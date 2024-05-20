@@ -1,5 +1,14 @@
 const { SlashCommandBuilder } = require("discord.js");
 
+var specialCases = {
+    user: async interaction =>
+    {
+        // BUG: only gets online users for some reason
+        var user = interaction.guild.members.cache.random().user;
+        return user.globalName ?? user.username;
+    }
+};
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("story")
@@ -26,13 +35,11 @@ module.exports = {
             {
                 keyword += i;
 
-                if (keyword === "user") // special case for $user
+                if (specialCases.hasOwnProperty(keyword))
                 {
-                    // BUG: only gets online users for some reason
-                    var user = interaction.guild.members.cache.random().user;
-                    user = user.globalName ?? user.username;
-                    
-                    output += `**${user}**`;
+                    var word = await specialCases[keyword](interaction);
+
+                    output += `**${word}**`;
                     inKeyword = false;
                     keyword = "";
                 }
@@ -66,14 +73,18 @@ module.exports = {
         // in case the keyword is the last thing
         if (inKeyword)
         {
-            if (wordlistMgr.wordlists.has(keyword))
+            if (specialCases.hasOwnProperty(keyword))
+            {
+                var word = await specialCases[keyword](interaction);
+                
+                output += `**${word}**`;
+            }
+            else if (wordlistMgr.wordlists.has(keyword))
             {
                 var wordlist = wordlistMgr.wordlists.get(keyword);
                 var word = wordlist[Math.floor(Math.random() * wordlist.length)];
 
                 output += `**${word}**`;
-                inKeyword = false;
-                keyword = "";
             }
             else
             {
