@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require("discord.js");
+const wordlistMgr = require("../wordlist_mgr");
 
 module.exports = {
     data: new SlashCommandBuilder()

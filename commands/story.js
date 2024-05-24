@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
+const wordlistMgr = require("../wordlist_mgr");
 
 var specialCases = {
     user: async interaction =>

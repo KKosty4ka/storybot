@@ -1,11 +1,7 @@
 const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
-const wordlistMgr = require("./wordlist_mgr");
 const config = require("./config.json");
 const path = require("path");
 const fs = require("fs");
-
-// probably bad
-global.wordlistMgr = wordlistMgr;
 
 var client = new Client({
     intents: [
