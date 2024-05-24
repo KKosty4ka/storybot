@@ -8,7 +8,10 @@ const fs = require("fs");
 global.wordlistMgr = wordlistMgr;
 
 var client = new Client({
-    intents: [GatewayIntentBits.Guilds],
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers // privileged :(
+    ]
 });
 
 client.commands = new Collection();

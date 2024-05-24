@@ -3,7 +3,9 @@ const { SlashCommandBuilder } = require("discord.js");
 var specialCases = {
     user: async interaction =>
     {
-        // BUG: only gets online users for some reason
+        // update member cache
+        await interaction.guild.members.fetch();
+
         var user = interaction.guild.members.cache.random().user;
         return user.globalName ?? user.username;
     }
@@ -98,7 +100,7 @@ module.exports = {
             if (specialCases.hasOwnProperty(keyword))
             {
                 var word = await specialCases[keyword](interaction);
-                
+
                 pushbold(output);
                 output.push(word);
                 pushbold(output);
